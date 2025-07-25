@@ -1,0 +1,162 @@
+# General Code Review Template
+# Universal rules applicable to all programming languages
+
+name: "General Code Review Template"
+description: "Universal code quality rules for all programming languages"
+version: "1.0.0"
+file_patterns:
+  - "*"
+
+rules:
+  security:
+    enabled: true
+    severity: "error"
+    prompt: |
+      Review this code for security vulnerabilities including:
+      - Hardcoded secrets, passwords, or API keys
+      - Unsafe input handling or injection vulnerabilities
+      - Insecure data transmission or storage
+      - Authentication and authorization issues
+      - Cryptographic weaknesses
+      - Information disclosure risks
+      - Path traversal or directory traversal vulnerabilities
+      Focus on identifying real security risks that could be exploited.
+    examples:
+      - "Remove hardcoded API keys and use environment variables"
+      - "Validate and sanitize all user inputs"
+      - "Use secure random number generation for tokens"
+
+  performance:
+    enabled: true
+    severity: "warning"
+    prompt: |
+      Analyze this code for performance issues:
+      - Inefficient algorithms or data structures
+      - Unnecessary loops, iterations, or computations
+      - Memory leaks or excessive memory usage
+      - Blocking operations that could be asynchronous
+      - Database query optimization opportunities
+      - Caching opportunities for expensive operations
+      - Resource management issues
+      Suggest specific improvements with measurable impact.
+    examples:
+      - "Consider using a hash map instead of linear search"
+      - "Cache this expensive computation result"
+      - "Use pagination for large data sets"
+
+  maintainability:
+    enabled: true
+    severity: "warning"
+    prompt: |
+      Evaluate code maintainability and readability:
+      - Function and class complexity (too long or complex)
+      - Code duplication and opportunities for refactoring
+      - Naming conventions and clarity
+      - Code organization and structure
+      - Error handling completeness
+      - Documentation and comments quality
+      - Separation of concerns
+      Prioritize changes that improve long-term maintainability.
+    examples:
+      - "Break this large function into smaller, focused functions"
+      - "Use more descriptive variable names"
+      - "Add error handling for this operation"
+
+  style:
+    enabled: true
+    severity: "info"
+    prompt: |
+      Check code style and consistency:
+      - Consistent formatting and indentation
+      - Naming convention adherence
+      - Code organization patterns
+      - Language-specific style guidelines
+      - Consistent error handling patterns
+      - Import/include organization
+      Focus on consistency within the codebase and language conventions.
+    examples:
+      - "Use consistent naming convention throughout"
+      - "Organize imports according to language standards"
+      - "Follow consistent error handling patterns"
+
+  documentation:
+    enabled: true
+    severity: "info"
+    prompt: |
+      Review documentation quality:
+      - Missing or inadequate function/method documentation
+      - Unclear or outdated comments
+      - Complex logic that needs explanation
+      - API documentation completeness
+      - README or setup documentation
+      - Code examples and usage patterns
+      Suggest documentation that helps other developers understand the code.
+    examples:
+      - "Add documentation for this public function"
+      - "Explain the purpose of this complex algorithm"
+      - "Update outdated comments to match current implementation"
+
+# Context-specific prompts for different scenarios
+context_prompts:
+  new_file: |
+    This is a new file. Pay special attention to:
+    - Overall architecture and design patterns
+    - Proper error handling from the start
+    - Security considerations in the initial implementation
+    - Documentation completeness for new functionality
+    - Consistency with existing codebase patterns
+
+  large_change: |
+    This is a large change (>100 lines). Focus on:
+    - Breaking changes and backward compatibility
+    - Performance implications of the changes
+    - Testing requirements and coverage
+    - Documentation updates needed
+    - Impact on other parts of the system
+
+  critical_path: |
+    This change affects critical code paths. Emphasize:
+    - Thorough error handling and edge cases
+    - Security implications and attack vectors
+    - Performance impact under load
+    - Testing coverage for critical scenarios
+    - Rollback and recovery considerations
+
+# Severity level definitions
+severity_levels:
+  error: 4      # Critical issues that should block deployment
+  warning: 3    # Important issues that should be addressed
+  info: 2       # Informational feedback for improvement
+  suggestion: 1 # Optional improvements and best practices
+
+# File-specific overrides
+file_overrides:
+  "test_*":
+    style:
+      severity: "suggestion"  # Relax style rules for test files
+  "*.test.*":
+    style:
+      severity: "suggestion"
+  "*.spec.*":
+    style:
+      severity: "suggestion"
+  "**/tests/**":
+    style:
+      severity: "suggestion"
+  "**/test/**":
+    style:
+      severity: "suggestion"
+  "*.md":
+    style:
+      enabled: false  # Skip style checks for markdown
+    performance:
+      enabled: false  # Skip performance checks for markdown
+  "*.json":
+    style:
+      enabled: false  # Skip style checks for JSON files
+  "*.yaml":
+    style:
+      enabled: false  # Skip style checks for YAML files
+  "*.yml":
+    style:
+      enabled: false  # Skip style checks for YAML files

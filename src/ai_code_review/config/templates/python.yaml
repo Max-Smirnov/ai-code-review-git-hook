@@ -1,0 +1,202 @@
+# Python Code Review Template
+# Python-specific code review rules and best practices
+
+name: "Python Code Review Template"
+description: "Comprehensive Python code review rules following PEP standards and best practices"
+version: "1.0.0"
+file_patterns:
+  - "*.py"
+  - "*.pyx"
+
+rules:
+  security:
+    enabled: true
+    severity: "error"
+    prompt: |
+      Review this Python code for security vulnerabilities:
+      - SQL injection risks (avoid string concatenation in queries)
+      - Command injection vulnerabilities (avoid shell=True, validate inputs)
+      - Unsafe deserialization (pickle, eval, exec usage)
+      - Hardcoded secrets or credentials
+      - Path traversal vulnerabilities (validate file paths)
+      - XSS in web applications (escape user input)
+      - Insecure random number generation (use secrets module)
+      - YAML/XML parsing vulnerabilities (use safe loaders)
+      - Regular expression DoS (ReDoS) attacks
+      Check for Python-specific security anti-patterns and suggest secure alternatives.
+    examples:
+      - "Use parameterized queries instead of string formatting"
+      - "Replace eval() with ast.literal_eval() for safe evaluation"
+      - "Use secrets.token_urlsafe() instead of random for tokens"
+      - "Validate file paths to prevent directory traversal"
+
+  performance:
+    enabled: true
+    severity: "warning"
+    prompt: |
+      Analyze this Python code for performance issues:
+      - Inefficient loops (use list comprehensions, generator expressions)
+      - Unnecessary object creation in loops
+      - String concatenation in loops (use join())
+      - Missing caching for expensive operations (functools.lru_cache)
+      - Inefficient data structures (use sets for membership tests)
+      - Blocking I/O operations (suggest async alternatives)
+      - Memory leaks (circular references, unclosed resources)
+      - Database query optimization (N+1 problems, bulk operations)
+      - Import performance (avoid heavy imports in hot paths)
+      Suggest specific Python optimizations with performance impact.
+    examples:
+      - "Use list comprehension instead of append() in loop"
+      - "Use set() for O(1) membership testing instead of list"
+      - "Add @lru_cache decorator for expensive computations"
+      - "Use ''.join() instead of string concatenation in loop"
+
+  maintainability:
+    enabled: true
+    severity: "warning"
+    prompt: |
+      Evaluate Python code maintainability:
+      - Function complexity (too many parameters, nested loops)
+      - Class design (single responsibility, proper inheritance)
+      - Code duplication and refactoring opportunities
+      - Error handling (specific exceptions, proper cleanup)
+      - Resource management (context managers, try/finally)
+      - Module organization and imports
+      - Type hints usage for better code clarity
+      - Docstring completeness (Google/NumPy style)
+      Focus on Pythonic patterns and long-term maintainability.
+    examples:
+      - "Break this function into smaller, focused functions"
+      - "Use context managers for resource management"
+      - "Add type hints to improve code clarity"
+      - "Use specific exception types instead of bare except"
+
+  style:
+    enabled: true
+    severity: "info"
+    prompt: |
+      Check Python style and PEP compliance:
+      - PEP 8 compliance (line length, naming conventions, spacing)
+      - Import organization (standard, third-party, local)
+      - Naming conventions (snake_case, CONSTANTS, CapWords)
+      - Docstring format and completeness
+      - Code formatting consistency
+      - Use of Python idioms and best practices
+      - Consistent error handling patterns
+      - Proper use of Python features (context managers, decorators)
+      Ensure code follows Python community standards.
+    examples:
+      - "Use snake_case for variable and function names"
+      - "Organize imports: standard library, third-party, local"
+      - "Use f-strings for string formatting"
+      - "Follow PEP 257 for docstring conventions"
+
+  documentation:
+    enabled: true
+    severity: "info"
+    prompt: |
+      Review Python documentation quality:
+      - Missing or inadequate docstrings (modules, classes, functions)
+      - Type hints for function parameters and return values
+      - Complex algorithm explanations
+      - API documentation completeness
+      - Usage examples in docstrings
+      - Inline comments for complex logic
+      - README and setup documentation
+      Check for Google or NumPy docstring style compliance.
+    examples:
+      - "Add docstring with Args, Returns, and Raises sections"
+      - "Include type hints for better IDE support"
+      - "Document the purpose of this complex algorithm"
+      - "Add usage examples to the docstring"
+
+# Python-specific context prompts
+context_prompts:
+  new_file: |
+    This is a new Python file. Pay special attention to:
+    - Module-level docstring and purpose
+    - Proper import organization (PEP 8)
+    - Class and function design patterns
+    - Error handling strategy
+    - Type hints usage
+    - Security considerations from the start
+
+  large_change: |
+    This is a large Python change. Focus on:
+    - Breaking changes in API design
+    - Performance implications (profiling needed?)
+    - Testing requirements (unit, integration)
+    - Documentation updates (docstrings, README)
+    - Backward compatibility considerations
+    - Migration path for existing code
+
+  web_framework: |
+    This appears to be web framework code. Emphasize:
+    - Input validation and sanitization
+    - Authentication and authorization
+    - SQL injection prevention
+    - XSS protection
+    - CSRF protection
+    - Secure session management
+    - Rate limiting considerations
+
+  data_processing: |
+    This appears to be data processing code. Focus on:
+    - Memory efficiency for large datasets
+    - Error handling for data quality issues
+    - Performance optimization (vectorization, chunking)
+    - Data validation and type checking
+    - Logging for debugging data issues
+
+# File-specific overrides for Python
+file_overrides:
+  "test_*.py":
+    style:
+      severity: "suggestion"
+    documentation:
+      severity: "suggestion"
+  "*_test.py":
+    style:
+      severity: "suggestion"
+    documentation:
+      severity: "suggestion"
+  "conftest.py":
+    documentation:
+      severity: "suggestion"
+  "setup.py":
+    style:
+      severity: "suggestion"
+  "__init__.py":
+    documentation:
+      enabled: false  # Often just imports
+  "migrations/*.py":
+    style:
+      severity: "suggestion"
+    maintainability:
+      enabled: false  # Auto-generated migration files
+  "manage.py":
+    style:
+      severity: "suggestion"
+  "wsgi.py":
+    style:
+      severity: "suggestion"
+  "asgi.py":
+    style:
+      severity: "suggestion"
+
+# Python-specific patterns to watch for
+python_patterns:
+  anti_patterns:
+    - "except:"  # Bare except clauses
+    - "eval("    # Dangerous evaluation
+    - "exec("    # Dangerous execution
+    - "shell=True"  # Dangerous shell execution
+    - "pickle.loads"  # Unsafe deserialization
+    - "yaml.load"    # Unsafe YAML loading
+  
+  good_patterns:
+    - "with open("     # Context managers
+    - "@lru_cache"     # Caching decorators
+    - "f\""            # F-string formatting
+    - "pathlib"        # Modern path handling
+    - "logging"        # Proper logging

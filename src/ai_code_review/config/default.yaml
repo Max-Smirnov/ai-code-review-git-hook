@@ -1,0 +1,114 @@
+# Default configuration for AI Code Review Git Hook
+# This file contains the default settings that can be overridden by:
+# - Global user config: ~/.ai-code-review/config.yaml
+# - Project config: .ai-code-review.yaml
+# - Environment variables: AI_CODE_REVIEW_*
+
+# AWS Bedrock Configuration
+bedrock:
+  region: "us-east-1"                    # AWS region
+  profile: null                          # AWS profile (optional)
+  model: "anthropic.claude-3-5-sonnet-20241022-v2:0"  # Bedrock model ID
+  max_tokens: 4000                       # Maximum tokens per request
+  temperature: 0.1                       # Model temperature (0.0-1.0)
+  timeout: 30                            # Request timeout in seconds
+  retry_attempts: 3                      # Number of retry attempts
+  retry_delay: 1                         # Delay between retries (seconds)
+
+# Git Configuration
+git:
+  default_compare_branch: "main"         # Default branch for comparison
+  max_diff_size: 10000                   # Maximum diff size in lines
+  max_files: 50                          # Maximum number of files to review
+  exclude_patterns:                      # Files/patterns to exclude
+    - "*.min.js"
+    - "*.min.css"
+    - "package-lock.json"
+    - "yarn.lock"
+    - "*.generated.*"
+    - "dist/*"
+    - "build/*"
+    - "node_modules/*"
+    - ".git/*"
+    - "*.pyc"
+    - "__pycache__/*"
+  include_patterns: []                   # Only include these patterns (optional)
+  binary_file_extensions:                # Extensions to treat as binary
+    - ".jpg"
+    - ".jpeg"
+    - ".png"
+    - ".gif"
+    - ".bmp"
+    - ".tiff"
+    - ".pdf"
+    - ".doc"
+    - ".docx"
+    - ".xls"
+    - ".xlsx"
+    - ".ppt"
+    - ".pptx"
+    - ".zip"
+    - ".tar"
+    - ".gz"
+    - ".rar"
+    - ".7z"
+    - ".exe"
+    - ".dll"
+    - ".so"
+    - ".dylib"
+
+# Review Configuration
+review:
+  enabled_rules:                         # Active rule categories
+    - security
+    - performance
+    - maintainability
+    - style
+    - documentation
+  severity_threshold: "warning"          # Minimum severity to report
+  max_issues_per_file: 10               # Maximum issues per file
+  context_lines: 3                      # Lines of context around changes
+  batch_size: 5                         # Files to process in parallel
+  rule_templates:                       # Rule template assignments
+    "*.py": ["python", "general"]
+    "*.js": ["javascript", "general"]
+    "*.ts": ["typescript", "general"]
+    "*.jsx": ["react", "javascript", "general"]
+    "*.tsx": ["react", "typescript", "general"]
+    "*.java": ["java", "general"]
+    "*.go": ["golang", "general"]
+    "*.rs": ["rust", "general"]
+    "*.cpp": ["cpp", "general"]
+    "*.c": ["c", "general"]
+    "*.cs": ["csharp", "general"]
+    "*.php": ["php", "general"]
+    "*.rb": ["ruby", "general"]
+    "*.swift": ["swift", "general"]
+    "*.kt": ["kotlin", "general"]
+    "*.scala": ["scala", "general"]
+    "*": ["general"]                    # Fallback for all files
+
+# User Interface Configuration
+ui:
+  interactive_mode: true                 # Enable interactive prompts
+  color_output: true                    # Enable colored output
+  show_diff_context: true               # Show diff context in results
+  show_progress: true                   # Show progress indicators
+  max_display_issues: 20                # Maximum issues to display
+  summary_only: false                   # Show only summary (no details)
+  auto_approve_threshold: null          # Auto-approve if issues below threshold
+
+# Logging Configuration
+logging:
+  level: "INFO"                         # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  file: null                           # Log file path (null = console only)
+  max_file_size: "10MB"                # Maximum log file size
+  backup_count: 3                      # Number of backup log files
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+# Performance Configuration
+performance:
+  cache_enabled: true                   # Enable caching
+  cache_ttl: 3600                      # Cache TTL in seconds
+  parallel_processing: true            # Enable parallel processing
+  max_workers: 4                       # Maximum worker threads
